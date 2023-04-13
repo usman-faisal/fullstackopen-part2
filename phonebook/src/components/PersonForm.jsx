@@ -1,20 +1,38 @@
 import React, {useState} from 'react';
-
+import personService from "../services/persons.js";
 const PersonForm = ({setPersons,persons}) => {
     const [newName, setNewName] = useState('')
     const [newNumber,setNewNumber] = useState('')
+    const clearInputState = () => {
+        setNewName("");
+        setNewNumber("");
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isNotUnique = persons.find(person => person.name === newName);
-        if(isNotUnique) return alert(`${newName} is already added to your phonebook`);
+        const existingPerson = persons.find(person => person.name === newName);
+        if(existingPerson){
+            const confirm = window.confirm(`${newName} is already added to your phonebook replace the old with a new one?`);
+            if(!confirm) return;
+            const updatedPerson = {
+                ...existingPerson,
+                number: newNumber,
+            }
+            personService.update(existingPerson.id,updatedPerson)
+                .then(res => {
+                    setPersons(persons.map(person => person.name === existingPerson.name ? res : person ))
+                    clearInputState();
+                })
+            return;
+        }
         const newPerson = {
             name: newName,
             number: newNumber,
-            id: persons.length + 1
         }
-        setPersons(persons.concat(newPerson))
-        setNewName("");
-        setNewNumber("")
+        personService.create(newPerson)
+            .then(newPerson => {
+                setPersons(persons.concat(newPerson))
+            })
+        clearInputState();
     }
     const handleNameChange = (e) => {
         setNewName(e.target.value)
