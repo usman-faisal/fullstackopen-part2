@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import personService from "../services/persons.js";
-const PersonForm = ({setPersons,persons}) => {
+const PersonForm = ({setPersons,persons,showNotification}) => {
     const [newName, setNewName] = useState('')
     const [newNumber,setNewNumber] = useState('')
+
     const clearInputState = () => {
         setNewName("");
         setNewNumber("");
@@ -19,8 +20,13 @@ const PersonForm = ({setPersons,persons}) => {
             }
             personService.update(existingPerson.id,updatedPerson)
                 .then(res => {
-                    setPersons(persons.map(person => person.name === existingPerson.name ? res : person ))
+                    setPersons(persons.map(person => person.name === res.name ? res : person ))
                     clearInputState();
+                    showNotification(`Updated ${res.name}`,"message")
+                })
+                .catch(err => {
+                    showNotification(`Information of ${existingPerson.name} has already removed from the server.`,"error")
+                    setPersons(persons.filter(person => person.name !== existingPerson.name ))
                 })
             return;
         }
@@ -31,8 +37,9 @@ const PersonForm = ({setPersons,persons}) => {
         personService.create(newPerson)
             .then(newPerson => {
                 setPersons(persons.concat(newPerson))
+                clearInputState();
+                showNotification(`Added ${newPerson.name}`,"message")
             })
-        clearInputState();
     }
     const handleNameChange = (e) => {
         setNewName(e.target.value)
