@@ -19,7 +19,6 @@ const CountryDetailsOpened = ({ country, toggleOpen }) => {
         lat={country.capitalInfo.latlng[0]}
         lng={country.capitalInfo.latlng[1]}
       />
-      <button onClick={toggleOpen}>Close</button>
     </div>
   );
 };

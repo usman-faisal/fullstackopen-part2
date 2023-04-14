@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import Country from "./Country.jsx";
+import CountryDetailsOpened from "./CountryDetailsOpened.jsx";
 
 const Countries = ({ filteredCountries }) => {
+  if (filteredCountries.length === 1) {
+    return (
+      <div>
+        <CountryDetailsOpened country={filteredCountries[0]} />;
+      </div>
+    );
+  }
   return (
     <div>
       {filteredCountries.length > 10

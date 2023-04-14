@@ -10,11 +10,7 @@ const Country = ({ country }) => {
   return (
     <>
       {open ? (
-        <CountryDetailsOpened
-          key={country.name.common}
-          toggleOpen={toggleOpen}
-          country={country}
-        />
+        <CountryDetailsOpened key={country.name.common} country={country} />
       ) : (
         <CountryDetailsClosed country={country} toggleOpen={toggleOpen} />
       )}
